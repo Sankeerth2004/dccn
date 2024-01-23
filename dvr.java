@@ -1,98 +1,52 @@
 import java.util.*;
-public class DVR
-{
-    static int v,e,graph[][],via[][],rt[][];
-    public static void main(String args[])
-    {
-        Scanner sc=new Scanner(System.in);
-        System.out.println("Enter the no of Vertices");
-        v=sc.nextInt();
-        graph=new int[v][v];
-        via=new int[v][v];
-        rt=new int[v][v];
-        System.out.println("Enter the no of Edges");
-        e=sc.nextInt();
-        for(int i=0;i<v;i++)
-            for(int j=0;j<v;j++)
-                if(i==j)
-                    graph[i][j]=0;
-                else
-                    graph[i][j]=9999;
-                   
-        for(int i=0;i<e;i++)
-        {
-            System.out.println("Please enter the data of edge: "+(i+1)+"\nSource: ");
-            int s=sc.nextInt();
-            System.out.println("Destination: ");
-            int d=sc.nextInt();
-            System.out.println("Cost");
-            int c=sc.nextInt();
-            graph[s-1][d-1]=graph[d-1][s-1]=c;
-        }
-        init_tables();
-        update_tables();
-        System.out.println("Initial routing tables are");
-        print_tables();
-        System.out.println("Enter the Source for which cost is changed");
-        int s=sc.nextInt();
-        System.out.println("Enter the Destination for which cost is changed");
-        int d=sc.nextInt();
-        System.out.println("Enter the changed cost");
-        int c=sc.nextInt();
-        graph[s-1][d-1]=graph[d-1][s-1]=c;
-        init_tables();
-        update_tables();
-        System.out.println("New Routing tables are");
-        print_tables();
-    }
-    static void print_tables()
-    {
-        for(int i[]:rt)
-        {
-            for(int j:i)
-                System.out.print("Dist: "+j+"\t");
-            System.out.println();
-        }
-    }
-    static void init_tables()
-    {
-        for(int i=0;i<v;i++)
-            for(int j=0;j<v;j++)
-            {
-                if(i==j)
-                {
-                    rt[i][j]=0;via[i][j]=i;
-                }
-                else
-                {
-                    rt[i][j]=via[i][j]=9999;
-                }
-            }
-    }
-    static void update_tables()
-    {
-        for(int i=0;i<4*v;i++)
-            updatetable(i%v);
-    }
-    static void updatetable(int s)
-    {
-        for(int i=0;i<v;i++)
-        {
-            if(graph[s][i]!=9999)
-            {
-                int dist=graph[s][i];
-                for(int j=0;j<v;j++)
-                {
-                    int idist=rt[i][j];
-                    if(via[i][j]==s)
-                        idist=9999;
-                    if(dist+idist<rt[s][j])
-                    {
-                        via[s][j]=i;
-                        rt[s][j]=dist+idist;
-                    }
-                }
-            }
-        }
-    }
+public class DVR {
+	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);
+		System.out.println("Enter the no of vertices");
+		int v=sc.nextInt();
+		int cost[][]=new int[v][v];
+		for(int i[]:cost)
+			Arrays.fill(i, 99999);
+		for(int i=0;i<cost.length;i++)
+			cost[i][i]=0;
+		System.out.println("Enter the no of edges");
+		int e=sc.nextInt();
+		for(int i=0;i<e;i++)
+		{
+			System.out.println("Enter the data for edge "+(i+1));
+			System.out.print("Source: ");
+			int s=sc.nextInt();
+			System.out.print("Destination: ");
+			int d=sc.nextInt();
+			System.out.print("Cost:");
+			int c=sc.nextInt();
+			cost[s-1][d-1]=cost[d-1][s-1]=c;
+		}
+		System.out.println("Initial routing table :-");
+		dvr(cost.clone());
+		System.out.print("Enter the Source for which cost is changed: ");
+		int s=sc.nextInt();
+		System.out.print("Enter the Destination for which cost is changed: ");
+		int d=sc.nextInt();
+		System.out.print("Enter the changed Cost:");
+		int c=sc.nextInt();
+		cost[s-1][d-1]=cost[d-1][s-1]=c;
+		System.out.println("New Routing table :-");
+		dvr(cost.clone());
+	}
+	static void dvr(int cost[][])
+	{
+		int n=cost.length;
+		for(int k=0;k<n;k++)
+			for(int i=0;i<n;i++)
+				for(int j=0;j<n;j++)
+					if(cost[i][j]>cost[i][k]+cost[k][j])
+						cost[i][j]=cost[i][k]+cost[k][j];
+		for(int i=0;i<n;i++)
+		{
+			for(int j=0;j<n;j++)
+				System.out.print("Dist : "+cost[i][j]+"\t");
+			System.out.println();
+		}
+	}
 }
